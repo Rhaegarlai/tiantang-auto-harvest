@@ -135,6 +135,7 @@ function updateNotificationKeys() {
     let barkToken = document.getElementById("bark_token").value;
     let dingTalkAccessToken = document.getElementById('dingtalk_token').value;
     let dingTalkSecret = document.getElementById('dingtalk_secret').value;
+    let webHookSendKey = document.getElementById("web_hook_send_key").value;
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/UpdateNotificationChannels", true);
@@ -145,7 +146,8 @@ function updateNotificationKeys() {
         DingTalk: {
             AccessToken: dingTalkAccessToken,
             Secret: dingTalkSecret
-        }
+        },
+        WebHook: webHookSendKey
     }));
 
     xhr.onreadystatechange = function () {
@@ -191,10 +193,13 @@ function loadNotificationKeys() {
                 let dingTalkAccessToken = dingTalk ? dingTalk["accessToken"] : "";
                 let dingTalkSecret = dingTalk ? dingTalk["secret"] : "";
 
+                let webHookSendKey =  responseJson["webHook"];
+
                 document.getElementById("server_chan_send_key").value = serverChanSendKey;
                 document.getElementById("bark_token").value = barkToken;
                 document.getElementById("dingtalk_token").value = dingTalkAccessToken;
                 document.getElementById("dingtalk_secret").value = dingTalkSecret;
+                document.getElementById("web_hook_send_key").value = webHookSendKey;
             }
         }
     }

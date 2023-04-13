@@ -33,6 +33,7 @@ namespace tiantang_auto_harvest.Models.Requests
         public string ServerChan { get; set; }
         public string Bark { get; set; }
         public DingTalkToken DingTalk { get; set; }
+        public string WebHook { get; set; }
 
         public class DingTalkToken
         {

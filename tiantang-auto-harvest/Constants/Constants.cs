@@ -50,6 +50,11 @@
         /// 钉钉推送地址 - 加签方式
         /// </summary>
         public const string DingTalk = "https://oapi.dingtalk.com/robot/send?access_token={0}&timestamp={1}&sign={2}";
+        
+        /// <summary>
+        /// 企业微信webhook
+        /// </summary>
+        public const string WebHook = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={0}";
     }
 
     public static class NotificationChannelNames
@@ -57,6 +62,8 @@
         public const string ServerChan = "serverchan";
         public const string Bark = "bark";
         public const string DingTalk = "DingTalk";
+        public const string WebHook = "webHook";
+
     }
 
     public class ErrorMessages

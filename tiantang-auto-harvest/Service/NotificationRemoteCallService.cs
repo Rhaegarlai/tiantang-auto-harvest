@@ -37,6 +37,7 @@ namespace tiantang_auto_harvest.Service
             await SendNotificationViaServerChan(notificationBody);
             await SendNotificationViaBark(notificationBody);
             await SendNotificationViaDingTalk(notificationBody);
+            await SendNotificationViaWebHook(notificationBody);
         }
 
         private async Task SendNotificationViaServerChan(NotificationBody notificationBody)
@@ -142,6 +143,41 @@ namespace tiantang_auto_harvest.Service
                 Content = JsonContent.Create(requestBody)
             };
             
+            await _httpClient.SendAsync(httpRequestMessage);
+        }
+
+        private async Task SendNotificationViaWebHook(NotificationBody notificationBody)
+        {
+            var serverChanConfig =
+                _defaultDbContext
+                    .PushChannelKeys
+                    .SingleOrDefault(p => p.ServiceName == NotificationChannelNames.WebHook);
+
+            if (serverChanConfig == null || string.IsNullOrEmpty(serverChanConfig.Token))
+            {
+                return;
+            }
+
+            var requestBody = new
+            {
+                msgtype = "markdown",
+                markdown = new
+                {
+                    content = $"# {notificationBody.Title}\n{notificationBody.Content.Replace("\n", "\n\n")}"
+                },
+            };
+
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(string.Format(NotificationURLs.WebHook, serverChanConfig.Token)),
+                Headers =
+                {
+                    {HttpRequestHeader.ContentType.ToString(), "application/json"}
+                },
+                Content = JsonContent.Create(requestBody)
+            };
+
             await _httpClient.SendAsync(httpRequestMessage);
         }
     }

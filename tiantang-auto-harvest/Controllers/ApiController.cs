@@ -1,6 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using tiantang_auto_harvest.Jobs;
 using tiantang_auto_harvest.Models;
 using tiantang_auto_harvest.Models.Requests;
 using tiantang_auto_harvest.Models.Responses;
@@ -14,11 +21,12 @@ namespace tiantang_auto_harvest.Controllers
     {
         private readonly ILogger<ApiController> _logger;
         private readonly AppService _appService;
+        private readonly ISchedulerFactory factory;
 
-        public ApiController(ILogger<ApiController> logger, AppService appService)
-        {
+        public ApiController(ILogger<ApiController> logger, AppService appService, ISchedulerFactory factory) {
             _logger = logger;
             _appService = appService;
+            this.factory = factory;
         }
 
         [HttpGet]
@@ -95,6 +103,16 @@ namespace tiantang_auto_harvest.Controllers
         public ActionResult GetNotificationKeys()
         {
             return new JsonResult(_appService.GetNotificationKeys());
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> ExcuteJob(string name)
+        {
+            IScheduler scheduler = await factory.GetScheduler();
+
+            await scheduler.TriggerJob(new JobKey("tiantang_auto_harvest.Jobs."+name));
+            return Ok();
         }
     }
 }

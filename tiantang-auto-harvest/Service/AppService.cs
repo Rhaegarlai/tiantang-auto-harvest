@@ -130,7 +130,8 @@ namespace tiantang_auto_harvest.Service
             {
                 new PushChannelConfiguration(NotificationChannelNames.ServerChan, setNotificationChannelRequest.ServerChan),
                 new PushChannelConfiguration(NotificationChannelNames.Bark, setNotificationChannelRequest.Bark),
-                new PushChannelConfiguration(NotificationChannelNames.DingTalk, setNotificationChannelRequest.DingTalk.AccessToken, setNotificationChannelRequest.DingTalk.Secret)
+                new PushChannelConfiguration(NotificationChannelNames.DingTalk, setNotificationChannelRequest.DingTalk.AccessToken, setNotificationChannelRequest.DingTalk.Secret),
+                new PushChannelConfiguration(NotificationChannelNames.WebHook, setNotificationChannelRequest.WebHook),
             };
 
             _defaultDbContext.UpdateRange(pushChannelConfigurations);
@@ -169,6 +170,9 @@ namespace tiantang_auto_harvest.Service
                             AccessToken = pushChannelConfiguration.Token,
                             Secret = pushChannelConfiguration.Secret
                         };
+                        break;
+                    case NotificationChannelNames.WebHook:
+                        response.WebHook = pushChannelConfiguration.Token;
                         break;
                     default:
                         _logger.LogWarning("未知的通知渠道{ServiceName}", pushChannelConfiguration.ServiceName);
